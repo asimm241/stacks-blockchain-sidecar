@@ -6,7 +6,8 @@
   "required": ["results", "limit", "offset", "total"],
   "properties": {
     "limit": {
-      "type": "integer"
+      "type": "integer",
+      "maximum": 200
     },
     "offset": {
       "type": "integer"

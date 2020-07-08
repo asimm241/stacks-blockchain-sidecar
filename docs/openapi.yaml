@@ -30,14 +30,16 @@ paths:
             application/json:
               schema:
                 $ref: ./api/blocks/get-blocks.schema.json
-  /sidecar/v1/{block_hash}:
+              example:
+                $ref: ./api/blocks/get-blocks.example.json
+  /sidecar/v1/block/{block_hash}:
     parameters:
         - name: block_hash
           in: path
           description: Hash of the block
           required: true
           schema:
-              type: string
+            type: string
     get:
       summary: Block by Hash
       operationId: get_block_by_id
@@ -48,8 +50,12 @@ paths:
             application/json:
               schema:
                 $ref: ./entities/blocks/block.schema.json
+              example:
+                $ref: ./entities/blocks/block.example.json
         404:
           description: Cannot find block of given hash
+        500:
+          description: Hex string is an odd number of digits
 
   /sidecar/v1/tx:
     get:
@@ -100,8 +106,14 @@ paths:
       responses:
         200:
           description: Contract found
+          content:
+            application/json:
+              schema:
+                $ref: ./entities/transactions/transaction-1-smart-contract.schema.json
+              example:
+                $ref: ./entities/transactions/transaction-1-smart-contract.example.json
         404:
-          description: Contract not found
+          description: Cannot find contract of given ID
     parameters:
       - name: contract_id
         in: path
@@ -119,6 +131,8 @@ paths:
           description: Success
           content:
             application/json:
+              schema:
+                $ref: ./api/core-node/get-info.schema.json
               example:
                 $ref: ./api/core-node/get-info.example.json
 
