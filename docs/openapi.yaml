@@ -114,7 +114,7 @@ paths:
         schema:
           type: string
     get:
-      summary: Get transaction by ID
+      summary: Get transaction
       tags:
         - Transactions
       operationId: get_transaction_by_id
@@ -173,7 +173,7 @@ paths:
           schema:
             type: string
     get:
-      summary: Get block by hash
+      summary: Get block
       tags:
         - Blocks
       operationId: get_block_by_id
@@ -193,7 +193,7 @@ paths:
 
   /sidecar/v1/contract/{contract_id}:
     get:
-      summary: Get contract info by ID
+      summary: Get contract info
       tags:
         - Smart Contracts
       operationId: get_contract_by_id
@@ -218,7 +218,7 @@ paths:
 
   /sidecar/v1/contract/{contract_id}/events:
     get:
-      summary: Get contract events by ID
+      summary: Get contract events
       tags:
         - Smart Contracts
       operationId: get_contract_events_by_id
@@ -388,7 +388,7 @@ paths:
 
   /sidecar/v1/address/{principal}/balances:
     get:
-      summary: Get account balances by ID
+      summary: Get account balances
       tags:
         - Accounts
       operationId: get_account_balance
@@ -411,7 +411,7 @@ paths:
 
   /sidecar/v1/address/{principal}/transactions:
     get:
-      summary: Get account transactions by ID
+      summary: Get account transactions
       tags:
         - Accounts
       operationId: get_account_transactions
@@ -434,7 +434,7 @@ paths:
 
   /sidecar/v1/address/{principal}/assets:
     get:
-      summary: Get account assets by ID
+      summary: Get account assets
       tags:
         - Accounts
       operationId: get_account_assets
@@ -457,7 +457,7 @@ paths:
 
   /v2/accounts/{principal}:
     get:
-      summary: Get account info by ID
+      summary: Get account info
       tags:
         - Accounts
       operationId: get_account_info
@@ -536,7 +536,7 @@ paths:
 
   /sidecar/v1/search/{id}:
     get:
-      summary: Search by ID
+      summary: Search
       description: Search blocks, transactions, contracts, or accounts by ID
       tags:
         - Search
