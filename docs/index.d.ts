@@ -1,4 +1,71 @@
 /**
+ * GET request that returns address assets
+ */
+export interface AccountAssets {
+  limit: number;
+  offset: number;
+  total: number;
+  results: {
+    event_index: number;
+    [k: string]: unknown | undefined;
+  }[];
+}
+
+/**
+ * GET request that returns address balances
+ */
+export interface AccountBalance {
+  stx: {
+    balance?: string;
+    total_sent?: string;
+    total_received?: string;
+    [k: string]: unknown | undefined;
+  };
+  fungible_tokens: {
+    [k: string]: unknown | undefined;
+  };
+  non_fungible_tokens: {
+    [k: string]: unknown | undefined;
+  };
+}
+
+/**
+ * GET request that returns account transactions
+ */
+export interface AccountTransactions {
+  limit: number;
+  offset: number;
+  total: number;
+  results: {
+    block_hash: string;
+    block_height: number;
+    /**
+     * A unix timestamp (in seconds) indicating when this block was mined.
+     */
+    burn_block_time: number;
+    canonical: boolean;
+    tx_id: string;
+    tx_index: number;
+    tx_status: TransactionStatus;
+    tx_result?: {
+      hex: string;
+      repr: string;
+    };
+    /**
+     * Integer string (64-bit unsigned integer).
+     */
+    fee_rate: string;
+    sender_address: string;
+    /**
+     * Denotes whether the originating account is the same as the paying account
+     */
+    sponsored: boolean;
+    post_condition_mode: PostConditionMode;
+    [k: string]: unknown | undefined;
+  }[];
+}
+
+/**
  * GET request that returns blocks
  */
 export interface BlockResults {
