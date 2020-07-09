@@ -418,7 +418,7 @@ paths:
                 $ref: ./api/core-node/get-info.schema.json
               example:
                 $ref: ./api/core-node/get-info.example.json
-  /sidecar/v1/:
+  /sidecar/v1/status:
     get:
       summary: Get Blockchain API status
       tags:
