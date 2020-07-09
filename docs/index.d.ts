@@ -1,11 +1,69 @@
 /**
- * GET request that returns transactions
+ * GET request that returns blocks
  */
 export interface BlockResults {
   limit: number;
   offset: number;
   total: number;
   results: Block[];
+}
+
+/**
+ * GET request for account data
+ */
+export interface AccountData {
+  balance: string;
+  nonce: number;
+  balance_proof: string;
+  nonce_proof: string;
+}
+
+/**
+ * GET request to get contract interface
+ */
+export interface ContractInterface {
+  functions: unknown[];
+  variables: unknown[];
+  maps: unknown[];
+  fungible_tokens: unknown[];
+  non_fungible_tokens: unknown[];
+}
+
+/**
+ * GET request to get contract source
+ */
+export interface ContractSource {
+  source: string;
+  publish_height: number;
+  proof: string;
+}
+
+/**
+ * GET request that core node information
+ */
+export interface CoreNodeInfo {
+  limit?: number;
+  peer_version: number;
+  burn_consensus: string;
+  burn_block_height: number;
+  stable_burn_consensus: string;
+  stable_burn_block_height: number;
+  server_version: string;
+  network_id: number;
+  parent_network_id: number;
+  stacks_tip_height: number;
+  stacks_tip: string;
+  stacks_tip_burn_block: string;
+  exit_at_block_height: number;
+}
+
+/**
+ * POST request that runs the faucet
+ */
+export interface RunFaucet {
+  success: boolean;
+  txId?: string;
+  txRaw?: string;
 }
 
 /**
@@ -37,15 +95,7 @@ export interface Block {
  * Describes representation of a Type-0 Stacks 2.0 transaction. https://github.com/blockstack/stacks-blockchain/blob/master/sip/sip-005-blocks-and-transactions.md#type-0-transferring-an-asset
  */
 export interface MempoolTokenTransferTransaction {
-  block_hash?: string;
-  block_height?: number;
-  /**
-   * A unix timestamp (in seconds) indicating when this block was mined.
-   */
-  burn_block_time?: number;
-  canonical?: boolean;
   tx_id: string;
-  tx_index?: number;
   tx_status: TransactionStatus;
   tx_result?: {
     hex: string;
@@ -80,15 +130,7 @@ export interface MempoolTokenTransferTransaction {
  * Describes representation of a Type-1 Stacks 2.0 transaction. https://github.com/blockstack/stacks-blockchain/blob/master/sip/sip-005-blocks-and-transactions.md#type-1-instantiating-a-smart-contract
  */
 export interface MempoolSmartContractTransaction {
-  block_hash?: string;
-  block_height?: number;
-  /**
-   * A unix timestamp (in seconds) indicating when this block was mined.
-   */
-  burn_block_time?: number;
-  canonical?: boolean;
   tx_id: string;
-  tx_index?: number;
   tx_status: TransactionStatus;
   tx_result?: {
     hex: string;
@@ -120,15 +162,7 @@ export interface MempoolSmartContractTransaction {
  * Describes representation of a Type 2 Stacks 2.0 transaction: Contract Call
  */
 export interface MempoolContractCallTransaction {
-  block_hash?: string;
-  block_height?: number;
-  /**
-   * A unix timestamp (in seconds) indicating when this block was mined.
-   */
-  burn_block_time?: number;
-  canonical?: boolean;
   tx_id: string;
-  tx_index?: number;
   tx_status: TransactionStatus;
   tx_result?: {
     hex: string;
@@ -167,15 +201,7 @@ export interface MempoolContractCallTransaction {
  * Describes representation of a Type 3 Stacks 2.0 transaction: Poison Microblock
  */
 export interface MempoolPoisonMicroblockTransaction {
-  block_hash?: string;
-  block_height?: number;
-  /**
-   * A unix timestamp (in seconds) indicating when this block was mined.
-   */
-  burn_block_time?: number;
-  canonical?: boolean;
   tx_id: string;
-  tx_index?: number;
   tx_status: TransactionStatus;
   tx_result?: {
     hex: string;
@@ -208,15 +234,7 @@ export interface MempoolPoisonMicroblockTransaction {
  * Describes representation of a Type 3 Stacks 2.0 transaction: Poison Microblock
  */
 export interface MempoolCoinbaseTransaction {
-  block_hash?: string;
-  block_height?: number;
-  /**
-   * A unix timestamp (in seconds) indicating when this block was mined.
-   */
-  burn_block_time?: number;
-  canonical?: boolean;
   tx_id: string;
-  tx_index?: number;
   tx_status: TransactionStatus;
   tx_result?: {
     hex: string;

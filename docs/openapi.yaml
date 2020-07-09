@@ -19,47 +19,60 @@ info:
     All `/v2/` routes a proxied to a Blockstack PBC-hosted Stacks Node. For a trustless architecture, you should make these requests to a self-hosted node.
 
 paths:
-  /sidecar/v1/block:
-    get:
-      summary: Block list
-      operationId: get_block_list
-      responses:
-        200:
-          description: Returns a list of Blockstack
-          content:
-            application/json:
-              schema:
-                $ref: ./api/blocks/get-blocks.schema.json
-              example:
-                $ref: ./api/blocks/get-blocks.example.json
-  /sidecar/v1/block/{block_hash}:
+  /sidecar/v1/faucets/stx:
     parameters:
-        - name: block_hash
-          in: path
-          description: Hash of the block
-          required: true
-          schema:
-            type: string
-    get:
-      summary: Block by Hash
-      operationId: get_block_by_id
+      - name: address
+        in: path
+        description: STX address
+        required: true
+        schema:
+          type: string
+    post:
+      summary: Get testnet STX tokens
+      tags:
+        - Faucets
+      operationId: run_faucet_stx
       responses:
         200:
-          description: Block found
+          description: Success
           content:
             application/json:
               schema:
-                $ref: ./entities/blocks/block.schema.json
+                $ref: ./api/faucet/run-faucet.schema.json
               example:
-                $ref: ./entities/blocks/block.example.json
-        404:
-          description: Cannot find block of given hash
+                $ref: ./api/faucet/run-faucet.example.json
         500:
-          description: Hex string is an odd number of digits
+          description: Failed to run faucet 
+  /sidecar/v1/faucets/btc:
+    parameters:
+      - name: address
+        in: path
+        description: BTC address
+        required: true
+        schema:
+          type: string
+    post:
+      summary: Get testnet BTC tokens
+      tags:
+        - Faucets
+      operationId: run_faucet_btc
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: ./api/faucet/run-faucet.schema.json
+              example:
+                $ref: ./api/faucet/run-faucet.example.json
+        500:
+          description: Failed to run faucet 
 
   /sidecar/v1/tx:
     get:
-      summary: Transaction list
+      summary: Get recent transactions
+      tags:
+        - Transactions
       operationId: get_transaction_list
       description: |
         If using TypeScript, import typings for this response from our types package:
@@ -83,7 +96,9 @@ paths:
         schema:
           type: string
     get:
-      summary: Transaction by ID
+      summary: Get transaction by ID
+      tags:
+        - Transactions
       operationId: get_transaction_by_id
       description: |
         `import type { Transaction } from '@blockstack/stacks-blockchain-sidecar-types';`
@@ -99,9 +114,70 @@ paths:
         404:
           description: Cannot find transaction of given ID
 
+  /v2/transactions:
+    post:
+      summary: Broadcast raw transaction
+      tags:
+        - Transactions
+      description: This endpoint is used to broadcast raw transactions on the network. You can use the [stracks-transactions-js](https://github.com/blockstack/stacks-transactions-js) project to generate a raw transaction payload.
+      operationId: post_core_node_transactions
+      requestBody:
+        content:
+          text/plain:
+            example: 00000000010400bed38c2aadffa348931bcb542880ff79d607afec000000000000000000000000000000c800012b0b1fff6cccd0974966dcd665835838f0985be508e1322e09fb3d751eca132c492bda720f9ef1768d14fdabed6127560ba52d5e3ac470dcb60b784e97dc88c9030200000000000516df0ba3e79792be7be5e50a370289accfc8c9e032000000000000303974657374206d656d6f00000000000000000000000000000000000000000000000000
+      responses:
+        200:
+          description: Successful post of a raw tx to the node's mempool
+        400:
+          description: Rejections result in a 400 error
+
+  /sidecar/v1/block:
+    get:
+      summary: Get recent blocks
+      tags:
+        - Blocks
+      operationId: get_block_list
+      responses:
+        200:
+          description: Returns a list of Blockstack
+          content:
+            application/json:
+              schema:
+                $ref: ./api/blocks/get-blocks.schema.json
+              example:
+                $ref: ./api/blocks/get-blocks.example.json
+  /sidecar/v1/block/{block_hash}:
+    parameters:
+        - name: block_hash
+          in: path
+          description: Hash of the block
+          required: true
+          schema:
+            type: string
+    get:
+      summary: Get block by hash
+      tags:
+        - Blocks
+      operationId: get_block_by_id
+      responses:
+        200:
+          description: Block found
+          content:
+            application/json:
+              schema:
+                $ref: ./entities/blocks/block.schema.json
+              example:
+                $ref: ./entities/blocks/block.example.json
+        404:
+          description: Cannot find block of given hash
+        500:
+          description: Hex string is an odd number of digits
+
   /sidecar/v1/contract/{contract_id}:
     get:
-      summary: Contract by address
+      summary: Get contract info by ID
+      tags:
+        - Smart Contracts
       operationId: get_contract_by_id
       responses:
         200:
@@ -122,79 +198,56 @@ paths:
         schema:
           type: string
 
-  /v2/info:
+  /v2/contracts/interface/{stacks_address}/{contract_name}:
     get:
-      summary: Core node info
-      operationId: get_core_node_info
+      summary: Get contract interface
+      tags:
+        - Smart Contracts
+      description: Returns a contract interface of a given contract
+      operationId: get_contract_interface
       responses:
         200:
           description: Success
           content:
             application/json:
               schema:
-                $ref: ./api/core-node/get-info.schema.json
+                $ref: ./api/core-node/get-contract-interface.schema.json
               example:
-                $ref: ./api/core-node/get-info.example.json
-
-  /v2/transactions:
-    post:
-      summary: Broadcast transaction
-      description: This endpoint is used to broadcast raw transactions on the network
-      operationId: get_core_node_transactions
-      responses:
-        200:
-          description: Successful post of a raw tx to the node's mempool
-        400:
-          description: Rejections result in a 400 error
-
-  /v2/accounts/{principal}:
-    get:
-      summary: Account data
-      operationId: get_account_data
-      description: |
-        Get the account data for the provided principal
-
-        ```json
-        {
-          "balance": "0x100.."\,
-          "nonce": 1,
-          "balance_proof": "0x01fa...",
-          "nonce_proof": "0x01ab...",
-        }
-        ```
-        Where balance is the hex encoding of a unsigned 128-bit integer (big-endian), nonce is a unsigned 64-bit integer, and the proofs are provided as hex strings.
-
-        For non-existent accounts, this does not 404, rather it returns an object with balance and nonce of 0.
-
-        This endpoint also accepts a querystring parameter `?proof=` which when supplied `0`, will return the JSON object without the `balance_proof` or `nonce_proof fields`
-      parameters:
-        - name: principal
-          in: path
-          description: Stacks address or a Contract identifier (e.g. `SP31DA6FTSJX2WGTZ69SFY11BH51NZMB0ZW97B5P0.get-info`)
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Success
+                $ref: ./api/core-node/get-contract-interface.example.json
+    parameters:
+      - name: stacks_address
+        in: path
+        required: true
+        description: Stacks address
+        schema:
+          type: string
+      - name: contract_name
+        in: path
+        required: true
+        description: Contract name
+        schema:
+          type: string
 
   /v2/map_entry/{stacks_address}/{contract_name}/{map_name}:
-    get:
-      summary: Contract data map
+    post:
+      summary: Get contract data map
+      tags:
+        - Smart Contracts
       operationId: get_contract_data_map
       description: |
         Attempt to fetch data from a contract data map. The contract is identified with [Stacks Address] and [Contract Name] in the URL path. The map is identified with [Map Name].
 
-
         The key to lookup in the map is supplied via the POST body. This should be supplied as the hex string serialization of the key (which should be a Clarity value). Note, this is a JSON string atom.
 
-        Data is the hex serialization of the map response. Note that map responses are Clarity option types, for non-existent values, this is a serialized none, and for all other responses, it is a serialized (some ...) object.
+        In the response, `data` is the hex serialization of the map response. Note that map responses are Clarity option types, for non-existent values, this is a serialized none, and for all other responses, it is a serialized (some ...) object.
       responses:
         200:
           description: Success
           content:
             application/json:
               example: { 'data': '0x01ce...', 'proof': '0x01ab...' }
+        400:
+          description: Failed loading data map
       parameters:
         - name: stacks_address
           in: path
@@ -219,50 +272,28 @@ paths:
           description: Returns object without the proof field
           schema:
             type: integer
-
-  /v2/fees/transfer:
-    get:
-      summary: Fee transfer
-      operationId: get_fee_transfer
-      description: Get an estimated fee rate for STX transfer transactions. This a a fee rate / byte, and is returned as a JSON integer
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              example:
-                $ref: ./api/core-node/get-info.example.json
-
-  /v2/contracts/interface/{stacks_address}/{contract_name}:
-    get:
-      summary: Contract interface
-      description: Returns a contract interface of a given contract
-      operationId: get_contract_interface
-      responses:
-        200:
-          description: Success
-    parameters:
-      - name: stacks_address
-        in: path
+      requestBody:
+        description: Hex string serialization of the lookup key (which should be a Clarity value)
         required: true
-        description: Stacks address
-        schema:
-          type: string
-      - name: contract_name
-        in: path
-        required: true
-        description: Contract name
-        schema:
-          type: string
+        content:
+          application/json
 
   /v2/contracts/source/{stacks_address}/{contract_name}:
     get:
-      summary: Contract source
+      summary: Get contract source
+      tags:
+        - Smart Contracts
       operationId: get_contract_source
       description: Returns the Clarity source code of a given contract, along with the block height it was published in, and the MARF proof for the data
       responses:
         200:
           description: Success
+          content:
+            application/json:
+              schema:
+                $ref: ./api/core-node/get-contract-source.schema.json
+              example:
+                $ref: ./api/core-node/get-contract-source.example.json
     parameters:
       - name: stacks_address
         in: path
@@ -278,13 +309,15 @@ paths:
           type: string
       - name: proof
         in: query
-        description: Returns object without the proof field
+        description: Returns object without the proof field if set to 0
         schema:
           type: integer
 
   /v2/contracts/call-read/{stacks_address}/{contract_name}/{function_name}:
     post:
       summary: Call read-only function
+      tags:
+        - Smart Contracts
       operationId: call_read_only_function
       description: |
         Call a read-only public function on a given smart contract.
@@ -320,3 +353,82 @@ paths:
         description: Function name
         schema:
           type: string
+
+  /v2/accounts/{principal}:
+    get:
+      summary: Get account by ID
+      tags:
+        - Accounts
+      operationId: get_account_data
+      description: |
+        Get the account data for the provided principal
+
+        Where balance is the hex encoding of a unsigned 128-bit integer (big-endian), nonce is a unsigned 64-bit integer, and the proofs are provided as hex strings.
+
+        For non-existent accounts, this does not 404, rather it returns an object with balance and nonce of 0.
+      parameters:
+        - name: principal
+          in: path
+          description: Stacks address or a Contract identifier (e.g. `SP31DA6FTSJX2WGTZ69SFY11BH51NZMB0ZW97B5P0.get-info`)
+          required: true
+          schema:
+            type: string
+        - name: proof
+          in: query
+          description: Returns object without the proof field if set to 0
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: ./api/core-node/get-account-data.schema.json
+              example:
+                $ref: ./api/core-node/get-account-data.example.json
+
+  /v2/fees/transfer:
+    get:
+      summary: Get estimated fee
+      tags:
+        - Fees
+      operationId: get_fee_transfer
+      description: Get an estimated fee rate for STX transfer transactions. This a a fee rate / byte, and is returned as a JSON integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              example:
+                $ref: ./api/core-node/get-fee-transfer.example.json
+
+  /v2/info:
+    get:
+      summary: Get Core API info
+      tags:
+        - Info
+      operationId: get_core_api_info
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: ./api/core-node/get-info.schema.json
+              example:
+                $ref: ./api/core-node/get-info.example.json
+  /status:
+    get:
+      summary: Get Blockchain API status
+      tags:
+        - Info
+      operationId: get_status
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              examples:
+                success:
+                  value: { status: 'ready' }
